@@ -128,10 +128,4 @@ describe('GroupDetailsComponent', () => {
     expect(component.telemetryImpression).toEqual(impressionObj);
     expect(component['groupService'].getImpressionObject).toHaveBeenCalled();
   });
-
-  it('show change dropdownMenuContent', () => {
-    component.showMemberPopup = false;
-    component.toggleFtuModal(true);
-    expect(component.showMemberPopup).toBeTruthy();
-  });
 });
