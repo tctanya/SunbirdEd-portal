@@ -623,10 +623,10 @@
   resolved "https://registry.yarnpkg.com/@project-sunbird/sb-styles/-/sb-styles-0.0.6.tgz#15a88937fb643d5eb33a81c8d28ece00b56d5aa0"
   integrity sha512-rK87rHdagadIS7UrWju7HDolIfWlO5CbK+tIJrEApO+QPMi+k8KuWoLc8MxEprrsJxUt6r44O4uGiO0hgI5plA==
 
-"@project-sunbird/sunbird-collection-editor@0.0.47":
-  version "0.0.47"
-  resolved "https://registry.yarnpkg.com/@project-sunbird/sunbird-collection-editor/-/sunbird-collection-editor-0.0.47.tgz#73cb1418f43eb72c4dd3df1962ce704e5de43aba"
-  integrity sha512-X1NCNUZqm+tLcPbLevfQV1C/CJNL56c9usOhyOytogSbJ+39fTVPNIIwHPn6wgRX2yzwCHrh89ytMS0C5e2/yQ==
+"@project-sunbird/sunbird-collection-editor@3.8.0":
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/@project-sunbird/sunbird-collection-editor/-/sunbird-collection-editor-3.8.0.tgz#1e2e855fabf2d9a4bc435b888f61b02b0fb15866"
+  integrity sha512-7W8mz+KNM9hAxntEEzUdQq0qxFRyF2fwjZgaFgcaMebR3R5tLqVXpEsVYiYFbZT8SgSFI6+WAZCc5NbNHdbC4Q==
   dependencies:
     tslib "^1.9.0"
 
@@ -2477,10 +2477,10 @@ charenc@~0.0.1:
   resolved "https://registry.yarnpkg.com/charenc/-/charenc-0.0.2.tgz#c0a1d2f3a7092e03774bfa83f14c0fc5790a8667"
   integrity sha1-wKHS86cJLgN3S/qD8UwPxXkKhmc=
 
-chart.js@2.7.3:
-  version "2.7.3"
-  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-2.7.3.tgz#cdb61618830bf216dc887e2f7b1b3c228b73c57e"
-  integrity sha512-3+7k/DbR92m6BsMUYP6M0dMsMVZpMnwkUyNSAbqolHKsbIzH2Q4LWVEHHYq7v0fmEV8whXE0DrjANulw9j2K5g==
+chart.js@2.9.4:
+  version "2.9.4"
+  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-2.9.4.tgz#0827f9563faffb2dc5c06562f8eb10337d5b9684"
+  integrity sha512-B07aAzxcrikjAPyV+01j7BmOpxtQETxTSlQ26BEYJ+3iUkbNKaOJ/nDbT6JjyqYxseM0ON12COHYdU2cTIjC7A==
   dependencies:
     chartjs-color "^2.1.0"
     moment "^2.10.2"
