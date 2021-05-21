@@ -53,6 +53,13 @@ export class ExploreContentComponent implements OnInit, OnDestroy, AfterViewInit
   public totalCount;
   public searchAll;
   public allMimeType;
+
+  // public newContentList: any;
+  // public newContentList1: any;
+
+
+
+
   constructor(public searchService: SearchService, public router: Router,
     public activatedRoute: ActivatedRoute, public paginationService: PaginationService,
     public resourceService: ResourceService, public toasterService: ToasterService,
@@ -237,6 +244,17 @@ export class ExploreContentComponent implements OnInit, OnDestroy, AfterViewInit
         this.paginationDetails = this.paginationService.getPager(data.result.count, this.paginationDetails.currentPage,
           this.configService.appConfig.SEARCH.PAGE_LIMIT);
         this.contentList = data.result.content || [];
+
+        // this.newContentList = this.contentList.filter((data1) => (data1.contentType === "TextBook"));
+        // this.newContentList1 = this.contentList.filter((data1) => (data1.contentType === "Resource"));
+        // // this.newContentList = [...this.newContentList, ...this.newContentList1];
+        // console.log("data1=====", this.newContentList);
+        // console.log("data2=====", this.newContentList1);
+
+        console.log("contentList", this.contentList);
+
+
+
         this.totalCount = data.result.count;
       }, err => {
         this.showLoader = false;

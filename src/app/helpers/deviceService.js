@@ -3,8 +3,8 @@ const CONSTANTS = require('./constants');
 const _ = require('lodash');
 const httpSatusCode = require('http-status-codes');
 const { logger } = require('@project-sunbird/logger');
-const {sendRequest} = require('./httpRequestHandler');
-const {parseJson} = require('./utilityService');
+const { sendRequest } = require('./httpRequestHandler');
+const { parseJson } = require('./utilityService');
 const uuidv1 = require('uuid/v1');
 
 const getDeviceProfile = async (req, res) => {
@@ -22,10 +22,10 @@ const getDeviceProfile = async (req, res) => {
   };
   try {
     const responseData = await sendRequest(options);
-    logger.info({msg: 'deviceService:getDeviceProfile', data: responseData.responseCode});
+    logger.info({ msg: 'deviceService:getDeviceProfile', data: responseData.responseCode });
     res.status(httpSatusCode.OK).send(parseJson(responseData))
   } catch (e) {
-    logger.error({msg: 'deviceService:getDeviceProfile caught exception', errorMessage: e.message, error: e});
+    logger.error({ msg: 'deviceService:getDeviceProfile caught exception', errorMessage: e.message, error: e });
     res.status(httpSatusCode.INTERNAL_SERVER_ERROR).send({
       "id": "api.device.profile",
       "ver": CONSTANTS.API_VERSION.V3,
@@ -60,8 +60,10 @@ const registerDeviceProfile = async (req, res) => {
   };
   try {
     const responseData = await sendRequest(options);
-    logger.info({msg: 'devi' +
-        'ceService:registerDeviceProfile', data: responseData.responseCode});
+    logger.info({
+      msg: 'devi' +
+        'ceService:registerDeviceProfile', data: responseData.responseCode
+    });
     res.status(httpSatusCode.OK).send(responseData)
   } catch (error) {
     logger.error({
@@ -89,7 +91,7 @@ const registerDeviceProfile = async (req, res) => {
 };
 
 
-module.exports = {getDeviceProfile, registerDeviceProfile};
+module.exports = { getDeviceProfile, registerDeviceProfile };
 
 
 

@@ -185,7 +185,7 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
                 switchMap(currentPageData => {
                     const { fields, filters } = currentPageData.search;
                     const request = {
-                        filters: {...this.selectedFilters, ...filters},
+                        filters: { ...this.selectedFilters, ...filters },
                         fields,
                         isCustodianOrg: this.custodianOrg,
                         channelId: this.channelId,
@@ -236,6 +236,7 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
                                     return;
                                 }
                                 this.pageSections = this.apiContentList.slice(0, 4);
+                                console.log("explore", this.pageSections);
                             }, err => {
                                 this.showLoader = false;
                                 this.apiContentList = [];

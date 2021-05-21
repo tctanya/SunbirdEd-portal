@@ -571,10 +571,8 @@
     reflect-metadata "^0.1.13"
     whatwg-fetch "^3.1.0"
 
-"@project-sunbird/common-consumption@^3.4.6":
-  version "3.4.6"
-  resolved "https://registry.yarnpkg.com/@project-sunbird/common-consumption/-/common-consumption-3.4.6.tgz#e1963d57764af82f6f6f97f019c81b4d58a22204"
-  integrity sha512-Sf9jEdSxijbF0bY0WyZF/83LG1YxLAjDfin9BGumtt4pt8mmdaKj0mMqHcho1xtaTk4EBWIOgRS8Jt5Ms2rb5g==
+"@project-sunbird/common-consumption@file:../../../../SunbirdEd-consumption-ngcomponents/dist/common-consumption":
+  version "4.0.0"
   dependencies:
     tslib "^1.9.0"
 
@@ -5983,10 +5981,15 @@ jquery.fancytree@^2.35.0:
   resolved "https://registry.yarnpkg.com/jquery.fancytree/-/jquery.fancytree-2.37.0.tgz#79f85f366714204aa52e644cc7f25949a05157f7"
   integrity sha512-qNyI0ftNOq2TMinUFmr9Mnjdq2jaB8A6ItWUqxOzd6kfSfGZ0DwRZLd1V5Ij3dycv7h7uI0YTl0bc2SCw3zH8w==
 
-jquery@>=1.7, jquery@^3.5.1:
+jquery@>=1.7:
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.5.1.tgz#d7b4d08e1bfdb86ad2f1a3d039ea17304717abb5"
   integrity sha512-XwIBPqcMn57FxfT+Go5pzySnm4KWkT1Tv7gjrpT1srtf8Weynl6R273VJ5GjkRb51IzMp5nbaPjJXMWeju2MKg==
+
+jquery@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.6.0.tgz#c72a09f15c1bdce142f49dbf1170bdf8adac2470"
+  integrity sha512-JVzAR/AjBvVt2BmYhxRCSYysDsPcssdmTFnzyLEts9qNwmjmu4JTAMYubEfwVOSwpQ1I1sKKFcxhZCI2buerfw==
 
 jquery@~2:
   version "2.2.4"
@@ -9159,10 +9162,10 @@ sax@>=0.6.0, sax@^1.1.4:
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
   integrity sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
 
-sb-svg2pdf@0.0.9:
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/sb-svg2pdf/-/sb-svg2pdf-0.0.9.tgz#c92bd6d9182cb72c45446379a8474e982de0fad8"
-  integrity sha512-BKxj5D+67MzRZjdZkRtpO+AJ+Qk7OV5XY1SeUsdLkPnAttzv9zX/OtRRKSPHHjsP3vhIkCA9WhWdp0fjIvumXg==
+sb-svg2pdf@0.0.10:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/sb-svg2pdf/-/sb-svg2pdf-0.0.10.tgz#4d5813d62be84d734bdb6498fa9d2ce4aae30771"
+  integrity sha512-8Dy4XDBRfPGMhXLcG3ZuqpTvXZYlC3hv1V/lCg37Ga51yz2asecO41jkcrVathbJ8Lnu1Yo91Wz/IpBfXzA4Ig==
   dependencies:
     tslib "^1.9.0"
 
