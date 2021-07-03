@@ -33,7 +33,7 @@ export class ReIssueCertificateComponent implements OnInit, OnDestroy {
     private router: Router,
     private telemetryService: TelemetryService,
     private userService: UserService,
-    ) { }
+  ) { }
 
   @HostListener('window:popstate', ['$event'])
   onPopState(event) {
@@ -56,27 +56,27 @@ export class ReIssueCertificateComponent implements OnInit, OnDestroy {
     this.button.nativeElement.classList.add('sb-btn-disabled');
     this.button.nativeElement.classList.remove('sb-btn-outline-primary');
     this.certService.getUserCertList(this.userName.trim(), this.courseId, this.userService.userid)
-    .pipe(takeUntil(this.unsubscribe$)).subscribe((data) => {
-      this.modifyCss();
-      if (!this.isErrorOccurred(_.get(data, 'result.response'))) {
-        this.userData = _.get(data, 'result.response');
-        this.criteriaMet = this.certService.checkCriteria(_.get(this.userData, 'courses.batches'));
-      }
-    }, (err) => {
-      this.modifyCss();
-      this.showErrorMsg(this.resourceService.messages.dashboard.emsg.m001);
-      value = !_.isEmpty(this.userData) ? this.userData['courses'].batches = [] : [];
-    });
+      .pipe(takeUntil(this.unsubscribe$)).subscribe((data) => {
+        this.modifyCss();
+        if (!this.isErrorOccurred(_.get(data, 'result.response'))) {
+          this.userData = _.get(data, 'result.response');
+          this.criteriaMet = this.certService.checkCriteria(_.get(this.userData, 'courses.batches'));
+        }
+      }, (err) => {
+        this.modifyCss();
+        this.showErrorMsg(this.resourceService.messages.dashboard.emsg.m001);
+        value = !_.isEmpty(this.userData) ? this.userData['courses'].batches = [] : [];
+      });
   }
 
   isErrorOccurred(response) {
     const errMsg = _.isEmpty(response) ? (this.resourceService.messages.emsg.m004).replace('{instance}', this.channelName) :
-        (_.isEmpty(_.get(response, 'courses.batches')) ? this.resourceService.messages.dashboard.emsg.m002 : '');
-      if (!_.isEmpty(errMsg)) {
-        this.showErrorMsg(errMsg);
-        return true;
-      }
-      return false;
+      (_.isEmpty(_.get(response, 'courses.batches')) ? this.resourceService.messages.dashboard.emsg.m002 : '');
+    if (!_.isEmpty(errMsg)) {
+      this.showErrorMsg(errMsg);
+      return true;
+    }
+    return false;
   }
 
   modifyCss() {
@@ -85,11 +85,11 @@ export class ReIssueCertificateComponent implements OnInit, OnDestroy {
     this.button.nativeElement.classList.add('sb-btn-outline-primary');
   }
 
-  showErrorMsg(msg)  {
+  showErrorMsg(msg) {
     this.toasterService.error(msg);
   }
 
-  reIssueCert (batch) {
+  reIssueCert(batch) {
     const request = {
       request: {
         courseId: this.courseId,
@@ -108,55 +108,61 @@ export class ReIssueCertificateComponent implements OnInit, OnDestroy {
   }
 
   toggleModal(visibility = false, batch?: {}) {
-    this.showModal = visibility;
-    this.userBatch  = !_.isEmpty(batch) ? batch : this.userBatch;
+    if (batch) {
+      this.showModal = !_.isEqual(_.get(batch, 'createdBy'), this.userService.userid)
+        ? (this.showErrorMsg(this.resourceService.messages.dashboard.emsg.m004), false) : visibility;
+      this.userBatch = batch;
+    } else {
+      this.showModal = visibility;
+      this.userBatch = this.userBatch;
+    }
   }
 
-    // To set telemetry impression
-    setImpressionEvent() {
-      this.telemetryImpression = {
-        context: {
-          env: _.get(this.activatedRoute.snapshot, 'data.telemetry.env')
-        },
-        edata: {
-          type: _.get(this.activatedRoute.snapshot, 'data.telemetry.type'),
-          pageid: _.get(this.activatedRoute.snapshot, 'data.telemetry.pageid'),
-          uri: this.router.url,
-          duration: this.navigationhelperService.getPageLoadTime()
-        },
-        object: this.setObject()
-      };
+  // To set telemetry impression
+  setImpressionEvent() {
+    this.telemetryImpression = {
+      context: {
+        env: _.get(this.activatedRoute.snapshot, 'data.telemetry.env')
+      },
+      edata: {
+        type: _.get(this.activatedRoute.snapshot, 'data.telemetry.type'),
+        pageid: _.get(this.activatedRoute.snapshot, 'data.telemetry.pageid'),
+        uri: this.router.url,
+        duration: this.navigationhelperService.getPageLoadTime()
+      },
+      object: this.setObject()
+    };
+  }
+
+  addTelemetry(id, extra) {
+    const interactData = {
+      context: {
+        env: _.get(this.activatedRoute, 'snapshot.data.telemetry.env'),
+        cdata: []
+      },
+      edata: {
+        id: id,
+        type: 'click',
+        pageid: _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid')
+      },
+      object: this.setObject()
+    };
+
+    if (extra) {
+      interactData.edata['extra'] = extra;
+      _.map(extra, ((value, key) => interactData.context.cdata.push({ id: value, type: key })));
     }
 
-    addTelemetry (id, extra) {
-      const interactData = {
-        context: {
-          env: _.get(this.activatedRoute, 'snapshot.data.telemetry.env'),
-          cdata: []
-        },
-        edata: {
-          id: id,
-          type: 'click',
-          pageid:  _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid')
-        },
-        object: this.setObject()
-      };
+    this.telemetryService.interact(interactData);
+  }
 
-      if (extra) {
-        interactData.edata['extra'] = extra;
-        _.map(extra, ((value, key) =>  interactData.context.cdata.push({id: value, type: key})));
-      }
-
-      this.telemetryService.interact(interactData);
-    }
-
-    setObject() {
-      return {
-        id: this.courseId,
-        type: _.get(this.userData, 'courses.contentType') || _.get(this.activatedRoute.snapshot, 'data.telemetry.object.type'),
-        ver: _.get(this.userData, 'courses.pkgVersion') ? _.get(this.userData, 'courses.pkgVersion') ? `${_.get(this.userData, 'courses.pkgVersion')}` : '1.0' : '1.0',
-      };
-    }
+  setObject() {
+    return {
+      id: this.courseId,
+      type: _.get(this.userData, 'courses.contentType') || _.get(this.activatedRoute.snapshot, 'data.telemetry.object.type'),
+      ver: _.get(this.userData, 'courses.pkgVersion') ? _.get(this.userData, 'courses.pkgVersion') ? `${_.get(this.userData, 'courses.pkgVersion')}` : '1.0' : '1.0',
+    };
+  }
 
   toLowerCase(msg: string) {
     if (msg) {
@@ -171,7 +177,7 @@ export class ReIssueCertificateComponent implements OnInit, OnDestroy {
   }
 
   enableReIssueCert(batch) {
-    return ((!_.isEmpty(_.get(batch, 'certificates')) || !_.isEmpty(_.get(batch, 'issuedCertificates')))  || _.get(batch, 'status') === 2);
+    return ((!_.isEmpty(_.get(batch, 'certificates')) || !_.isEmpty(_.get(batch, 'issuedCertificates'))) || _.get(batch, 'status') === 2);
   }
 
   ngOnDestroy() {

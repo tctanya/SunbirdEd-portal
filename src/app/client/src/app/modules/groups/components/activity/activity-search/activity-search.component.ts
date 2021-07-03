@@ -1,7 +1,7 @@
 import { ADD_ACTIVITY_TO_GROUP } from './../../../interfaces/routerLinks';
 import { CourseConsumptionService } from '@sunbird/learn';
 import { Component, OnInit, EventEmitter, OnDestroy } from '@angular/core';
-import { FrameworkService, SearchService, FormService, UserService, OrgDetailsService } from '@sunbird/core';
+import { FrameworkService, SearchService, FormService, UserService } from '@sunbird/core';
 import {
   ConfigService,
   ResourceService,
@@ -12,7 +12,7 @@ import {
 } from '@sunbird/shared';
 import * as _ from 'lodash-es';
 import { Subject, of, combineLatest } from 'rxjs';
-import { takeUntil, map, catchError, first, debounceTime, tap, delay, mergeMap } from 'rxjs/operators';
+import { takeUntil, map, catchError, first, debounceTime, tap, delay } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IPagination } from '../../../../shared/interfaces/index';
 import { CacheService } from 'ng2-cache-service';
@@ -77,8 +77,7 @@ export class ActivitySearchComponent implements OnInit, OnDestroy {
     private router: Router,
     private groupsService: GroupsService,
     public layoutService: LayoutService,
-    public courseConsumptionService: CourseConsumptionService,
-    public orgDetailsService: OrgDetailsService
+    public courseConsumptionService: CourseConsumptionService
   ) {
     this.csGroupAddableBloc = CsGroupAddableBloc.instance;
   }
@@ -165,21 +164,7 @@ export class ActivitySearchComponent implements OnInit, OnDestroy {
   }
 
   public getFilters(filters) {
-    const filterData = filters && filters.filters || {};
-    if (filterData.channel && this.facets) {
-      const channelIds = [];
-      const facetsData = _.find(this.facets, { 'name': 'channel' });
-      _.forEach(filterData.channel, (value, index) => {
-        const data = _.find(facetsData.values, { 'identifier': value });
-        if (data) {
-          channelIds.push(data.name);
-        }
-      });
-      if (channelIds && Array.isArray(channelIds) && channelIds.length > 0) {
-        filterData.channel = channelIds;
-      }
-    }
-    this.selectedFilters = filterData;
+    this.selectedFilters = filters.filters;
     const defaultFilters = _.reduce(filters, (collector: any, element) => {
 
       /* istanbul ignore else */
@@ -245,24 +230,6 @@ export class ActivitySearchComponent implements OnInit, OnDestroy {
       option.params.framework = this.frameWorkName;
     }
     this.searchService.contentSearch(option, false)
-      .pipe(
-        mergeMap(data => {
-          const channelFacet = _.find(_.get(data, 'result.facets') || [], facet => _.get(facet, 'name') === 'channel')
-          if (channelFacet) {
-            const rootOrgIds = this.orgDetailsService.processOrgData(_.get(channelFacet, 'values'));
-            return this.orgDetailsService.searchOrgDetails({
-              filters: { isRootOrg: true, rootOrgId: rootOrgIds },
-              fields: ['slug', 'identifier', 'orgName']
-            }).pipe(
-              mergeMap(orgDetails => {
-                channelFacet.values = _.get(orgDetails, 'content');
-                return of(data);
-              })
-            )
-          }
-          return of(data);
-        })
-      )
       .subscribe(data => {
         this.showLoader = false;
         this.facets = this.searchService.updateFacetsData(_.get(data, 'result.facets'));

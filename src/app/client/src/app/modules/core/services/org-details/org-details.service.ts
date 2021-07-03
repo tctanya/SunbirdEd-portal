@@ -1,4 +1,4 @@
-import {throwError, of, Observable, BehaviorSubject } from 'rxjs';
+import { throwError, of, Observable, BehaviorSubject } from 'rxjs';
 import { mergeMap, map, catchError, skipWhile, shareReplay, tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { ConfigService, ServerResponse, ToasterService, ResourceService, BrowserCacheTtlService } from '@sunbird/shared';
@@ -26,7 +26,7 @@ export class OrgDetailsService {
   public _rootOrgId: string;
 
   public readonly orgDetails$: Observable<any> = this._orgDetails$.asObservable()
-  .pipe(skipWhile(data => data === undefined || data === null));
+    .pipe(skipWhile(data => data === undefined || data === null));
 
   private _custodianOrg$: Observable<any> = this.getCustodianOrg().pipe(shareReplay(1));
 
@@ -85,11 +85,11 @@ export class OrgDetailsService {
   }
   setOrgDetailsToRequestHeaders() {
     this.learnerService.rootOrgId = this.orgDetails.rootOrgId;
-    this.learnerService.channelId = this.orgDetails.hashTagId;
+    this.learnerService.channelId = this.orgDetails.channel;
     this.contentService.rootOrgId = this.orgDetails.rootOrgId;
-    this.contentService.channelId = this.orgDetails.hashTagId;
+    this.contentService.channelId = this.orgDetails.channel;
     this.publicDataService.rootOrgId = this.orgDetails.rootOrgId;
-    this.publicDataService.channelId = this.orgDetails.hashTagId;
+    this.publicDataService.channelId = this.orgDetails.channel;
   }
 
   searchOrg() {
@@ -174,7 +174,7 @@ export class OrgDetailsService {
           let commingSoonData = {};
           try {
             commingSoonData = JSON.parse(data.result.response.value);
-          } catch (e) {}
+          } catch (e) { }
           this.cacheService.set('contentComingSoon', commingSoonData, {
             maxAge: this.browserCacheTtlService.browserCacheTtl
           });
@@ -188,11 +188,11 @@ export class OrgDetailsService {
     }
   }
 
-  getCommingSoonMessageObj (data, orgids) {
+  getCommingSoonMessageObj(data, orgids) {
     let commingSoonMessageObj = {};
     if (data && data.length) {
       _.forEach(orgids, (eachrootorg) => {
-        commingSoonMessageObj = _.find(data, {rootOrgId: eachrootorg});
+        commingSoonMessageObj = _.find(data, { rootOrgId: eachrootorg });
         if (commingSoonMessageObj) {
           return false;
         }
@@ -219,15 +219,4 @@ export class OrgDetailsService {
 
     return this.publicDataService.post(option);
   }
-  processOrgData(channels) {
-    const rootOrgIds = [];
-    _.forEach(channels, (channelData) => {
-      if (channelData.name) {
-        rootOrgIds.push(channelData.name);
-      }
-    });
-    return rootOrgIds;
-  }
 }
-
-

@@ -22,42 +22,42 @@ var certRegServiceApi = {
 }
 
 const createMock = {
-  "id":"api.content.create",
-  "ver":"3.0",
-  "ts":"2020-10-12T09:31:27ZZ",
-  "params":{
-     "resmsgid":"18b3cf91-6d7e-4bb9-b393-b5385e81b011",
-     "msgid":null,
-     "err":null,
-     "status":"successful",
-     "errmsg":null
+  "id": "api.content.create",
+  "ver": "3.0",
+  "ts": "2020-10-12T09:31:27ZZ",
+  "params": {
+    "resmsgid": "18b3cf91-6d7e-4bb9-b393-b5385e81b011",
+    "msgid": null,
+    "err": null,
+    "status": "successful",
+    "errmsg": null
   },
-  "responseCode":"OK",
-  "result":{
-     "identifier":"do_11312763976015872012",
-     "node_id":"do_11312763976015872012",
-     "versionKey":"1602495087918"
+  "responseCode": "OK",
+  "result": {
+    "identifier": "do_11312763976015872012",
+    "node_id": "do_11312763976015872012",
+    "versionKey": "1602495087918"
   }
 };
 
 const uploadMock = {
-  "id":"api.content.upload",
-  "ver":"3.0",
-  "ts":"2020-10-12T09:31:32ZZ",
-  "params":{
-     "resmsgid":"bb3bf3fa-d542-45f5-ac9d-a4352c373946",
-     "msgid":null,
-     "err":null,
-     "status":"successful",
-     "errmsg":null
+  "id": "api.content.upload",
+  "ver": "3.0",
+  "ts": "2020-10-12T09:31:32ZZ",
+  "params": {
+    "resmsgid": "bb3bf3fa-d542-45f5-ac9d-a4352c373946",
+    "msgid": null,
+    "err": null,
+    "status": "successful",
+    "errmsg": null
   },
-  "responseCode":"OK",
-  "result":{
-     "identifier":"do_11312763976015872012",
-     "artifactUrl":"https://sunbirddev.blob.core.windows.net/sunbird-content-dev/content/do_11312763976015872012/artifact/apgov.png",
-     "content_url":"https://sunbirddev.blob.core.windows.net/sunbird-content-dev/content/do_11312763976015872012/artifact/apgov.png",
-     "node_id":"do_11312763976015872012",
-     "versionKey":"1602495092097"
+  "responseCode": "OK",
+  "result": {
+    "identifier": "do_11312763976015872012",
+    "artifactUrl": "https://sunbirddev.blob.core.windows.net/sunbird-content-dev/content/do_11312763976015872012/artifact/apgov.png",
+    "content_url": "https://sunbirddev.blob.core.windows.net/sunbird-content-dev/content/do_11312763976015872012/artifact/apgov.png",
+    "node_id": "do_11312763976015872012",
+    "versionKey": "1602495092097"
   }
 }
 
@@ -114,7 +114,7 @@ module.exports = function (app) {
           } else return proxyUtils.handleSessionExpiry(proxyRes, _.omit(data, ['result.response.content', 'result.response.count']), req, res);
         } catch (err) {
           logError(req, err, `Error occurred while searching userData with: ${certRegServiceApi.getUserDetails}`);
-          return proxyUtils.handleSessionExpiry(proxyRes, err , req, res);
+          return proxyUtils.handleSessionExpiry(proxyRes, err, req, res);
         }
       },
     })
@@ -128,8 +128,13 @@ module.exports = function (app) {
       proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(certRegURL),
       proxyReqPathResolver: function (req) {
         logger.debug(req.context, { msg: `${req.url} is called with ${JSON.stringify(_.get(req, 'body'))} by userId:${req.session['userId']}userId: ${req.session['userId']}` });
-        // Only if loggedIn user & content creator or if the user is an assigned mentor same, then only he can re-issue the certificate
-        return require('url').parse(certRegURL + 'course/batch/cert/v1/issue' + '?' + 'reIssue=true').path;
+        // Only if loggedIn user & content creator is same, then only he can re-issue the certificate
+        if (_.get(req.body, 'request.createdBy') === req.session['userId']) {
+          return require('url').parse(certRegURL + 'course/batch/cert/v1/issue' + '?' + 'reIssue=true').path;
+        } else {
+          logError(req, 'UNAUTHORIZED_USER', `createdBy,${_.get(req.body, 'request.createdBy')},  userID: ${req.session['userId']} should be equal`);
+          throw new Error('UNAUTHORIZED_USER');
+        }
       },
       userResDecorator: async (proxyRes, proxyResData, req, res) => {
         try {
@@ -153,13 +158,13 @@ module.exports = function (app) {
       proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(certRegURL),
       proxyReqPathResolver: function (req) {
         const batch = _.pick(_.get(req, 'body.request'), ['batchId', 'courseId', 'template']);
-        req.body.request = {batch: batch};
-        logger.debug(req.context, {msg: `${req.url} is called with requestBody: ${JSON.stringify(req.body)}`});
+        req.body.request = { batch: batch };
+        logger.debug(req.context, { msg: `${req.url} is called with requestBody: ${JSON.stringify(req.body)}` });
         return require('url').parse(certRegURL + certRegServiceApi.addTemplate).path;
       },
-      userResDecorator:  (proxyRes, proxyResData, req, res) => {
+      userResDecorator: (proxyRes, proxyResData, req, res) => {
         try {
-          logger.info({msg: `Adding certificate {} to a  courseId ${_.get(req, 'body.request.batch.courseId')}',batchId: ${_.get(req, 'body.request.batch.batchId')}, template id ${_.get(req, 'body.request.batch.template.identifier')}`});
+          logger.info({ msg: `Adding certificate {} to a  courseId ${_.get(req, 'body.request.batch.courseId')}',batchId: ${_.get(req, 'body.request.batch.batchId')}, template id ${_.get(req, 'body.request.batch.template.identifier')}` });
           const data = JSON.parse(proxyResData.toString('utf8'));
           if (req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
           else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
@@ -172,18 +177,18 @@ module.exports = function (app) {
 
 
   app.patch('/certreg/v1/template/add',
-    bodyParser.json({ limit: '10mb'}),
+    bodyParser.json({ limit: '10mb' }),
     isAPIWhitelisted.isAllowed(),
     removeCert(),
     proxy(certRegURL, {
       proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(certRegURL),
       proxyReqPathResolver: function (req) {
-        logger.debug(req.context, {msg: `${req.url} is called with requestBody: ${JSON.stringify(req.body)}`});
+        logger.debug(req.context, { msg: `${req.url} is called with requestBody: ${JSON.stringify(req.body)}` });
         return require('url').parse(certRegURL + certRegServiceApi.addTemplate).path;
       },
-      userResDecorator:  (proxyRes, proxyResData, req, res) => {
+      userResDecorator: (proxyRes, proxyResData, req, res) => {
         try {
-          logger.info({msg: `Adding certificate {} to a  courseId ${_.get(req, 'body.request.batch.courseId')}',batchId: ${_.get(req, 'body.request.batch.batchId')}, template id ${_.get(req, 'body.request.batch.template.identifier')}`});
+          logger.info({ msg: `Adding certificate {} to a  courseId ${_.get(req, 'body.request.batch.courseId')}',batchId: ${_.get(req, 'body.request.batch.batchId')}, template id ${_.get(req, 'body.request.batch.template.identifier')}` });
           const data = JSON.parse(proxyResData.toString('utf8'));
           if (req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
           else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
